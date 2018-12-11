@@ -1,6 +1,7 @@
 package com.dageek.imagesplitter.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,7 +18,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.dageek.imagesplitter.R;
 import com.dageek.imagesplitter.interfaces.OnImageSelectionListener;
 import com.dageek.imagesplitter.modals.CustomImage;
-import com.dageek.imagesplitter.utility.Utility;
 
 import java.util.ArrayList;
 
@@ -27,14 +27,10 @@ public class CustomImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private OnImageSelectionListener onImageSelectionListener;
     private RequestManager glide;
     private RequestOptions options;
-    private float size;
-    private int margin = 2;
-    private int padding;
+    private int selectedPosition = -1;
 
     public CustomImageAdapter(Context context) {
         this.list = new ArrayList<>();
-        size = Utility.convertDpToPixel(92, context) - 2;
-        padding = (int) (size / 3.5);
         glide = Glide.with(context);
         options = new RequestOptions().override(256).transform(new CenterCrop()).transform(new FitCenter());
     }
@@ -63,10 +59,10 @@ public class CustomImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         list.clear();
     }
 
-    public void select(boolean selection, int pos) {
+    public void select(int pos) {
         if (pos < 100) {
-            list.get(pos).setSelected(selection);
-            notifyItemChanged(pos);
+            selectedPosition = pos;
+            notifyDataSetChanged();
         }
     }
 
@@ -83,16 +79,12 @@ public class CustomImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         CustomImage image = list.get(position);
         if (holder instanceof Holder) {
             Holder imageHolder = (Holder) holder;
-            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) size, (int) size);
-            layoutParams.setMargins(margin, margin, margin, margin);
-            imageHolder.itemView.setLayoutParams(layoutParams);
-
-            imageHolder.selection.setPadding(padding, padding, padding, padding);
-            imageHolder.preview.setLayoutParams(layoutParams);
-
             glide.load(image.getContentUrl()).apply(options).into(imageHolder.preview);
-
-            imageHolder.selection.setVisibility(image.getSelected() ? View.VISIBLE : View.GONE);
+            if(selectedPosition == position) {
+                imageHolder.itemView.setBackgroundColor(Color.RED);
+            } else {
+                imageHolder.itemView.setBackgroundColor(Color.GRAY);
+            }
         } else {
             HolderNone noneHolder = (HolderNone) holder;
             FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(0, 0);
@@ -108,13 +100,10 @@ public class CustomImageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public class Holder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private ImageView preview;
-        private ImageView selection;
-
 
         Holder(View itemView) {
             super(itemView);
             preview = itemView.findViewById(R.id.preview);
-            selection = itemView.findViewById(R.id.selection);
             itemView.setOnClickListener(this);
         }
 

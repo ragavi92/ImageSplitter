@@ -3,13 +3,11 @@ package com.dageek.imagesplitter.utility;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.File;
@@ -17,12 +15,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class Utility {
-
-    public static float convertDpToPixel(float dp, Context context) {
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        return dp * ((float) metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-    }
 
     public static Cursor getCursor(Context context) {
         return context.getContentResolver().query(Constants.URI, Constants.PROJECTION,

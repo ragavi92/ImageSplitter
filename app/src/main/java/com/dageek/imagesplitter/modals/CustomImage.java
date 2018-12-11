@@ -5,12 +5,10 @@ import java.io.Serializable;
 public class CustomImage implements Serializable {
     private String contentUrl;
     private String url;
-    private Boolean isSelected;
 
     public CustomImage(String contentUrl, String url) {
         this.contentUrl = contentUrl;
         this.url = url;
-        this.isSelected = false;
     }
 
     public String getContentUrl() {
@@ -27,14 +25,6 @@ public class CustomImage implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public Boolean getSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(Boolean selected) {
-        isSelected = selected;
     }
 
 }

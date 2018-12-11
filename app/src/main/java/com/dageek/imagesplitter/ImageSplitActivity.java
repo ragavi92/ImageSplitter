@@ -61,8 +61,6 @@ public class ImageSplitActivity extends AppCompatActivity {
         previewImage = findViewById(R.id.previewImage);
 
         loadImages();
-        // To select first image
-        customImageAdapter.select(true, 0);
     }
 
     private void loadImages() {
@@ -71,7 +69,7 @@ public class ImageSplitActivity extends AppCompatActivity {
         int limit = 100;
         if (cursor.getCount() < 100) {
             limit = cursor.getCount();
-        };
+        }
         int data = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
         int contentUrl = cursor.getColumnIndex(MediaStore.Images.Media._ID);
         for (int i = 0; i < limit; i++) {
@@ -83,18 +81,24 @@ public class ImageSplitActivity extends AppCompatActivity {
         customImageAdapter.clearList();
         customImageAdapter.addImageList(imageList);
         customImageAdapter.notifyDataSetChanged();
+        // To select the first image by default
+        setImageForPreview(imageList.get(0).getUrl(), 0);
     }
 
     private OnImageSelectionListener onImageSelectionListener = new OnImageSelectionListener() {
         @Override
         public void onClick(CustomImage customImage, View view, int position) {
-            customImageAdapter.select(true, position);
-            File f = new File(customImage.getUrl());
-            BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-            Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(),bmOptions);
-            previewImage.setImageBitmap(bitmap);
+            setImageForPreview(customImage.getUrl(), position);
         }
     };
+
+    public void setImageForPreview(String imageURL, int position) {
+        customImageAdapter.select(position);
+        File f = new File(imageURL);
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
+        previewImage.setImageBitmap(bitmap);
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -145,7 +149,7 @@ public class ImageSplitActivity extends AppCompatActivity {
     private Bitmap sliceBitmap(int sliceNo, Bitmap bitmap) {
         float startX = (sliceNo - 1) * frameWidth;
         float startY = (bitmap.getHeight() - frameHeight) / 2;
-        return Bitmap.createBitmap(bitmap,  Math.round(startX), Math.round(startY), Math.round(frameWidth), Math.round(frameHeight));
+        return Bitmap.createBitmap(bitmap, Math.round(startX), Math.round(startY), Math.round(frameWidth), Math.round(frameHeight));
     }
 
 }
